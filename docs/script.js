@@ -51,7 +51,7 @@ function loadTrack(i, autoplay){
   const t = playlist[current];
   audio.src = t.src;
   trackTitle.textContent = t.title;
-  trackArtist.textContent = t.artist + " ›";
+  trackArtist.textContent = t.artist;
   cover.src = t.cover;
   cover.style.display = '';
   progressFill.style.width = '0%';
