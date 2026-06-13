@@ -126,6 +126,39 @@ document.querySelectorAll('.flip-card').forEach(card => {
   card.addEventListener('click', () => card.classList.toggle('flipped'));
 });
 
+// 猫タイムライン：ドラッグ＆ホイールで横スクロール
+const catLine = document.querySelector('.cat-timeline');
+if (catLine){
+  // マウスホイールを横スクロールに変換
+  catLine.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+      catLine.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive:false });
+
+  // クリック＆ドラッグでスクロール
+  let down = false, startX = 0, startLeft = 0, moved = 0;
+  catLine.addEventListener('pointerdown', (e) => {
+    down = true; moved = 0;
+    startX = e.clientX; startLeft = catLine.scrollLeft;
+    catLine.classList.add('grabbing');
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const dx = e.clientX - startX;
+    moved = Math.max(moved, Math.abs(dx));
+    catLine.scrollLeft = startLeft - dx;
+  });
+  window.addEventListener('pointerup', () => {
+    down = false; catLine.classList.remove('grabbing');
+  });
+  // ドラッグ直後のクリックでカードが裏返らないように
+  catLine.addEventListener('click', (e) => {
+    if (moved > 6){ e.stopPropagation(); e.preventDefault(); }
+  }, true);
+}
+
 // 初始化
 audio.volume = volume.value / 100;
 loadTrack(0, false);
