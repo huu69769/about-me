@@ -14,8 +14,8 @@ const playlist = [
     cover: "assets/img/cover2.jpg"
   },
   {
-    title: "歌曲三",
-    artist: "歌手三",
+    title: "ENDLESS RAIN",
+    artist: "X JAPAN",
     src:   "assets/audio/song3.mp3",
     cover: "assets/img/cover3.jpg"
   }
