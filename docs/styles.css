@@ -196,7 +196,7 @@ html,body{
   background:
     radial-gradient(circle at 50% 50%, #2a2a2a 0 28%, #111 28.5% 70%, #1a1a1a 70.5% 100%);
   box-shadow:0 18px 50px rgba(0,0,0,.7), inset 0 0 40px rgba(0,0,0,.8);
-  animation:spin 4s linear infinite;
+  animation:spin 8s linear infinite;
   animation-play-state:paused;
 }
 .vinyl.playing{ animation-play-state:running;}
@@ -207,7 +207,7 @@ html,body{
     rgba(255,255,255,.035) 0 1px, transparent 1px 4px);
 }
 .vinyl-label{
-  position:absolute;inset:32%;
+  position:absolute;inset:16%;
   border-radius:50%;
   background:radial-gradient(circle at 50% 45%, var(--red) 0%, var(--red2) 80%);
   display:flex;align-items:center;justify-content:center;
