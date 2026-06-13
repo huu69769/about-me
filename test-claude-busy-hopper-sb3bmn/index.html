@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>关于我 · ME</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Caveat:wght@400;700&family=Gochi+Hand&family=Bebas+Neue&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ===================== 首页 / HERO ===================== -->
+<section class="page hero">
+
+  <!-- 背景涂鸦碎片 -->
+  <span class="doodle d1">★</span>
+  <span class="doodle d2">~</span>
+  <span class="doodle d3">✦</span>
+  <span class="doodle d4">↯</span>
+  <span class="scribble s1"></span>
+  <span class="scribble s2"></span>
+  <span class="tape tp1"></span>
+  <span class="tape tp2"></span>
+
+  <!-- 左半：大标题自我介绍 -->
+  <div class="hero-left">
+    <p class="kicker" style="--rot:-4deg">HELLO, 我是 —</p>
+    <h1 class="big-title">
+      <span class="line l1" style="--rot:-3deg">这里是</span>
+      <span class="line l2" style="--rot:2deg">我的</span>
+      <span class="line l3 outline" style="--rot:-2deg">拼贴</span>
+      <span class="line l4" style="--rot:3deg">小宇宙</span>
+    </h1>
+
+    <div class="intro-blurb" style="--rot:-2deg">
+      <p>一个爱听摇滚、爱看电影、<br/>话有点多的普通人。</p>
+      <p class="hand">↓ 右边那张黑胶，按一下就转 ↓</p>
+    </div>
+
+    <div class="sticker stk1" style="--rot:6deg">VIP 灵魂玩家</div>
+    <div class="sticker stk2" style="--rot:-8deg">音量调大</div>
+  </div>
+
+  <!-- 右半：黑胶播放器 -->
+  <div class="hero-right">
+    <div class="player">
+
+      <!-- 唱臂 -->
+      <div class="tonearm" id="tonearm">
+        <span class="tonearm-pivot"></span>
+        <span class="tonearm-bar"></span>
+        <span class="tonearm-head"></span>
+      </div>
+
+      <!-- 黑胶盘 -->
+      <div class="turntable">
+        <div class="vinyl" id="vinyl">
+          <div class="vinyl-grooves"></div>
+          <div class="vinyl-label">
+            <!-- 专辑封面放这里：assets/img/cover1.jpg 等 -->
+            <img id="cover" src="assets/img/cover1.jpg" alt="album cover"
+                 onerror="this.style.display='none'" />
+            <span class="vinyl-hole"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 歌曲信息 -->
+      <div class="track-meta">
+        <div class="track-title">
+          <span id="trackTitle">November Rain</span>
+        </div>
+        <div class="track-artist" id="trackArtist">Guns N' Roses ›</div>
+      </div>
+
+      <!-- 进度条 -->
+      <div class="progress-row">
+        <span class="time" id="curTime">00:00</span>
+        <div class="progress" id="progress">
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-knob" id="progressKnob"></div>
+        </div>
+        <span class="time" id="durTime">00:00</span>
+      </div>
+
+      <!-- 控制区 -->
+      <div class="controls">
+        <button class="ctrl" id="prevBtn" title="上一首">⏮</button>
+        <button class="ctrl play" id="playBtn" title="播放/暂停">▶</button>
+        <button class="ctrl" id="nextBtn" title="下一首">⏭</button>
+
+        <div class="volume">
+          <span class="vol-ico">🔊</span>
+          <input type="range" id="volume" min="0" max="100" value="80" />
+        </div>
+      </div>
+
+      <audio id="audio" preload="metadata"></audio>
+    </div>
+  </div>
+
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
