@@ -114,7 +114,7 @@ if (rain){
     d.className = 'drop';
     d.style.left = (Math.random() * 100) + 'vw';
     d.style.height = (50 + Math.random() * 60) + 'px';
-    d.style.animationDuration = (0.5 + Math.random() * 0.7) + 's';
+    d.style.animationDuration = (1.2 + Math.random() * 1.0) + 's';
     d.style.animationDelay = (-Math.random() * 2) + 's';
     d.style.opacity = (0.25 + Math.random() * 0.5).toFixed(2);
     rain.appendChild(d);

@@ -232,9 +232,12 @@ html,body{
   overflow:hidden;
   z-index:60;
   opacity:0;                  /* 默认不下雨 */
-  transition:opacity .6s ease;
+  transition:opacity 2.4s ease;   /* 暂停时：雨慢慢变淡停下 */
 }
-body.playing .rain{ opacity:1; }   /* 播放时下雨 */
+body.playing .rain{
+  opacity:1;
+  transition:opacity .6s ease;    /* 播放时：较快淡入 */
+}
 .rain .drop{
   position:absolute;
   top:-12%;
