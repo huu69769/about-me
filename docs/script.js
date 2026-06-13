@@ -54,6 +54,10 @@ function loadTrack(i, autoplay){
   trackArtist.textContent = t.artist;
   cover.src = t.cover;
   cover.style.display = '';
+  // 切り替え時：ジャケットの回転を 0 にリセット（まっすぐに戻す）
+  vinyl.style.animation = 'none';
+  void vinyl.offsetWidth;          // リフローで強制リセット
+  vinyl.style.animation = '';
   progressFill.style.width = '0%';
   progressKnob.style.left = '0%';
   curTime.textContent = "00:00";
