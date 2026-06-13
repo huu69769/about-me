@@ -225,6 +225,28 @@ html,body{
 
 @keyframes spin{ to{ transform:rotate(360deg);} }
 
+/* ===================== 下雨效果 ===================== */
+.rain{
+  position:fixed; inset:0;
+  pointer-events:none;        /* 不挡点击 */
+  overflow:hidden;
+  z-index:60;
+  opacity:0;                  /* 默认不下雨 */
+  transition:opacity .6s ease;
+}
+body.playing .rain{ opacity:1; }   /* 播放时下雨 */
+.rain .drop{
+  position:absolute;
+  top:-12%;
+  width:2px;
+  background:linear-gradient(to bottom,
+    rgba(174,194,224,0), rgba(174,194,224,.7));
+  animation:fall linear infinite;
+}
+@keyframes fall{
+  to{ transform:translateY(120vh); }
+}
+
 /* 歌曲信息 */
 .track-meta{ width:100%; text-align:left;}
 .track-title{

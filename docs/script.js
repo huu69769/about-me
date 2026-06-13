@@ -60,17 +60,16 @@ function loadTrack(i, autoplay){
   if (autoplay) play();
 }
 
+function setPlayingUI(){
+  playBtn.textContent = "⏸";
+  vinyl.classList.add('playing');
+  tonearm.classList.add('on');
+  document.body.classList.add('playing');   // 开始下雨
+}
+
 function play(){
-  audio.play().then(() => {
-    playBtn.textContent = "⏸";
-    vinyl.classList.add('playing');
-    tonearm.classList.add('on');
-  }).catch(() => {
-    // 没有音频文件时，仍然让黑胶转起来做演示
-    playBtn.textContent = "⏸";
-    vinyl.classList.add('playing');
-    tonearm.classList.add('on');
-  });
+  audio.play().then(setPlayingUI).catch(setPlayingUI);
+  // 没有音频文件时也照样转、照样下雨做演示
 }
 
 function pause(){
@@ -78,6 +77,7 @@ function pause(){
   playBtn.textContent = "▶";
   vinyl.classList.remove('playing');
   tonearm.classList.remove('on');
+  document.body.classList.remove('playing'); // 停止下雨
 }
 
 function togglePlay(){
@@ -104,6 +104,22 @@ progress.addEventListener('click', (e) => {
   const pct = (e.clientX - rect.left) / rect.width;
   if (audio.duration) audio.currentTime = pct * audio.duration;
 });
+
+// ===== 生成雨丝（一次性，靠 body.playing 控制显隐）=====
+const rain = document.getElementById('rain');
+if (rain){
+  const DROPS = 90;
+  for (let i = 0; i < DROPS; i++){
+    const d = document.createElement('span');
+    d.className = 'drop';
+    d.style.left = (Math.random() * 100) + 'vw';
+    d.style.height = (50 + Math.random() * 60) + 'px';
+    d.style.animationDuration = (0.5 + Math.random() * 0.7) + 's';
+    d.style.animationDelay = (-Math.random() * 2) + 's';
+    d.style.opacity = (0.25 + Math.random() * 0.5).toFixed(2);
+    rain.appendChild(d);
+  }
+}
 
 // 初始化
 audio.volume = volume.value / 100;
