@@ -8,8 +8,8 @@ const playlist = [
     cover: "assets/img/cover1.jpg"
   },
   {
-    title: "歌曲二",
-    artist: "歌手二",
+    title: "Purple Rain",
+    artist: "Prince and the Revolution",
     src:   "assets/audio/song2.mp3",
     cover: "assets/img/cover2.jpg"
   },
