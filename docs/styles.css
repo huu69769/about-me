@@ -496,19 +496,52 @@ body.playing .rain{
 .disc-ph{ font-family:'Zen Kaku Gothic New',sans-serif; font-size:.78rem; color:rgba(255,255,255,.45); text-align:center; padding:.4rem; z-index:0; }
 .disc-cap{ display:block; margin-top:.55rem; font-size:1.05rem; text-align:center; color:var(--ink); }
 
-/* ===================== ストーリー ===================== */
-.story-wrap{ display:flex; gap:4vw; align-items:center; flex-wrap:wrap; }
-.story-wrap.reverse{ flex-direction:row-reverse; }
-.story-img{
-  position:relative; flex:1 1 320px; min-height:240px; aspect-ratio:4/3;
-  border-radius:12px; overflow:hidden;
-  background:linear-gradient(135deg,#26262a,#161618);
-  box-shadow:6px 8px 0 rgba(0,0,0,.5);
-  display:flex; align-items:center; justify-content:center;
+/* ===================== STORY / 続けること ===================== */
+.saga-flow{
+  position:relative;
+  max-width:760px; margin:0 auto;
+  display:flex; flex-direction:column; gap:2.8rem;
+  padding-left:3rem;
 }
-.story-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
-.story-text{ flex:1 1 360px; display:flex; flex-direction:column; gap:1rem; font-size:clamp(1.05rem,1.6vw,1.3rem); line-height:1.55; }
-.story-text strong{ color:var(--red); }
+.saga-flow::before{
+  content:''; position:absolute;
+  left:.95rem; top:.4rem; bottom:.4rem; width:3px;
+  background:rgba(255,255,255,.15);
+}
+.chapter{ position:relative; }
+.ch-no{
+  position:absolute; left:-3rem; top:-.1rem;
+  width:2rem; height:2rem; border-radius:50%;
+  background:var(--red); color:#fff;
+  font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:1px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 0 4px var(--bg);
+  z-index:2;
+}
+.chapter h3{
+  font-family:'Zen Kaku Gothic New',sans-serif; font-weight:700;
+  font-size:clamp(1.2rem,2.4vw,1.7rem); line-height:1.3;
+  margin-bottom:.5rem; color:var(--ink);
+}
+.chapter p{
+  font-size:clamp(1.05rem,1.6vw,1.25rem); line-height:1.75;
+  color:#d9d6cf;
+}
+.chapter strong{ color:var(--red); }
+.chapter .tag-row{ margin-top:.9rem; }
+
+.saga-video{
+  max-width:760px; margin:4rem auto 0;
+}
+.saga-video video{
+  width:100%; display:block;
+  border-radius:12px; background:#000;
+  box-shadow:6px 8px 0 rgba(0,0,0,.5);
+}
+.saga-video figcaption{
+  text-align:center; margin-top:.9rem;
+  font-family:'Caveat',cursive; color:var(--muted); font-size:1.3rem;
+}
 
 /* ===================== CONTACT ===================== */
 .contact{ text-align:center; }
