@@ -74,14 +74,15 @@ html,body{
 .big-title .line{
   display:inline-block;
   width:max-content;
-  font-size:clamp(3.5rem,9vw,8.5rem);
+  font-size:clamp(3rem,7.5vw,7rem);
   letter-spacing:2px;
+  max-width:100%;
   transform:rotate(var(--rot));
   text-shadow:4px 5px 0 rgba(0,0,0,.6);
 }
 .big-title .l1{ color:var(--ink); margin-left:.2em;}
-.big-title .l2{ color:var(--red); margin-left:1.4em;}
-.big-title .l4{ color:var(--ink); margin-left:.6em;}
+.big-title .l2{ color:var(--red); margin-left:.8em;}
+.big-title .l4{ color:var(--ink); margin-left:.3em;}
 .outline{
   color:transparent !important;
   -webkit-text-stroke:2px var(--ink);
