@@ -98,6 +98,14 @@ html,body{
   max-width:30ch;
 }
 .intro-blurb .hand{ color:var(--red); margin-top:.4rem;}
+.intro-blurb .quote-en{
+  font-family:'Helvetica Neue',Arial,'Hiragino Sans','Noto Sans JP',sans-serif;
+  font-weight:600;
+  white-space:nowrap;            /* 不换行，保持一行 */
+  font-size:clamp(.8rem,1.7vw,1.15rem);
+  letter-spacing:.3px;
+  margin-bottom:.3rem;
+}
 
 /* 贴纸 */
 .sticker{
