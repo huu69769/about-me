@@ -245,7 +245,7 @@ html,body{
 }
 body.playing .rain{
   opacity:1;
-  transition:opacity .6s ease;    /* 播放时：较快淡入 */
+  transition:opacity 2.2s ease;    /* 播放时：和停止时差不多的速度，慢慢渐显 */
 }
 .rain .drop{
   position:absolute;
