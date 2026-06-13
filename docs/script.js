@@ -121,6 +121,11 @@ if (rain){
   }
 }
 
+// 猫カード：タップで裏返す（スマホ用）
+document.querySelectorAll('.flip-card').forEach(card => {
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+});
+
 // 初始化
 audio.volume = volume.value / 100;
 loadTrack(0, false);
