@@ -604,3 +604,45 @@ body.playing .rain{
   animation:pawFade .8s ease forwards;
 }
 @keyframes pawFade{ 0%{opacity:.75;} 100%{opacity:0;} }
+
+/* ===================== らくがきボード ===================== */
+.doodle-wrap{ max-width:900px; margin:0 auto; }
+.doodle-tools{
+  display:flex; flex-wrap:wrap; align-items:center; gap:.7rem;
+  margin-bottom:1rem;
+}
+.tool-group{ display:flex; gap:.4rem; align-items:center; }
+.db-color{
+  width:26px; height:26px; border-radius:50%;
+  border:3px solid rgba(255,255,255,.25); cursor:pointer; padding:0;
+  transition:transform .12s;
+}
+.db-color:hover{ transform:scale(1.1); }
+.db-color.active{ border-color:#fff; transform:scale(1.15); box-shadow:0 0 0 2px rgba(0,0,0,.4); }
+.db-size{
+  width:36px; height:36px; border-radius:8px;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.db-size .dot{ background:var(--ink); border-radius:50%; display:block; }
+.db-size.active{ background:var(--red); border-color:var(--red); }
+.db-size.active .dot{ background:#fff; }
+.db-btn{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18);
+  color:var(--ink); padding:.45em .9em; border-radius:8px; cursor:pointer;
+  font-size:.95rem; transition:transform .12s, background .15s;
+}
+.db-btn:hover{ transform:translateY(-2px); }
+.db-btn.active{ background:var(--red); color:#fff; border-color:var(--red); }
+.db-save{ background:var(--ink); color:#111; font-weight:700; border-color:var(--ink); }
+.doodle-canvas{
+  width:100%; display:block;
+  background:#faf7f0; border-radius:10px;
+  box-shadow:6px 8px 0 rgba(0,0,0,.5);
+  touch-action:none; cursor:crosshair;
+}
+.doodle-note{
+  margin-top:.7rem; font-family:'Caveat',cursive;
+  color:var(--muted); font-size:1.05rem;
+}

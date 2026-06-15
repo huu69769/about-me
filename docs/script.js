@@ -250,6 +250,98 @@ if ('IntersectionObserver' in window){
   revealEls.forEach(el => el.classList.add('reveal-in'));
 }
 
+// ===== らくがきボード =====
+(function(){
+  const canvas = document.getElementById('doodleCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const PAPER = '#faf7f0';
+  const STORE_KEY = 'rakugaki-board';
+  let color = '#ff3b30', size = 4, erasing = false, drawing = false, lastX = 0, lastY = 0;
+
+  function cssH(){ return Math.round(canvas.clientWidth * 0.55); }
+
+  function fitCanvas(keep){
+    const data = keep ? canvas.toDataURL() : null;
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth, h = cssH();
+    canvas.style.height = h + 'px';
+    canvas.width  = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, w, h);
+    if (data){ const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = data; }
+  }
+
+  function pos(e){ const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+  function start(e){ drawing = true; [lastX, lastY] = pos(e); stroke(e); }
+  function stroke(e){
+    if (!drawing) return;
+    const [x, y] = pos(e);
+    ctx.strokeStyle = erasing ? PAPER : color;
+    ctx.lineWidth   = erasing ? size * 2.4 : size;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+    lastX = x; lastY = y;
+  }
+  function end(){ if (drawing){ drawing = false; saveBoard(); } }
+
+  canvas.addEventListener('pointerdown', start);
+  canvas.addEventListener('pointermove', stroke);
+  window.addEventListener('pointerup', end);
+
+  /* =====================================================================
+     保存／読み込み（★バックエンド差し替えポイント★）
+     いまは localStorage に保存＝その人の端末だけに残る（共有されない）。
+     共有ボードにするときは、この2関数を Firebase / Supabase 用に置き換え、
+     さらにリアルタイム購読を1つ足すだけで「みんなで描ける壁」になる。
+     ===================================================================== */
+  function saveBoard(){ try { localStorage.setItem(STORE_KEY, canvas.toDataURL('image/png')); } catch(e){} }
+  function loadBoard(){
+    const data = localStorage.getItem(STORE_KEY);
+    if (!data) return;
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, canvas.clientWidth, cssH());
+    img.src = data;
+  }
+
+  // 色
+  document.querySelectorAll('.db-color').forEach(b => {
+    b.addEventListener('click', () => {
+      color = b.dataset.color; erasing = false;
+      document.querySelectorAll('.db-color').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById('dbEraser').classList.remove('active');
+    });
+  });
+  // 太さ
+  document.querySelectorAll('.db-size').forEach(b => {
+    b.addEventListener('click', () => {
+      size = parseInt(b.dataset.size, 10);
+      document.querySelectorAll('.db-size').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+  // けしゴム
+  const eraserBtn = document.getElementById('dbEraser');
+  eraserBtn.addEventListener('click', () => { erasing = !erasing; eraserBtn.classList.toggle('active', erasing); });
+  // ぜんぶ消す
+  document.getElementById('dbClear').addEventListener('click', () => {
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, canvas.clientWidth, cssH()); saveBoard();
+  });
+  // 画像で保存
+  document.getElementById('dbSave').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'rakugaki.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  fitCanvas(false);
+  loadBoard();
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => fitCanvas(true), 200); });
+})();
+
 // 初始化
 audio.volume = volume.value / 100;
 loadTrack(0, false);
