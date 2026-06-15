@@ -336,6 +336,8 @@ body.playing .rain{
 @media (max-width:768px) and (orientation:portrait){
   .hero{ flex-direction:column;}
   .hero-right{ border-left:none; border-top:2px dashed rgba(255,255,255,.08);}
+  /* 贴纸下移到底部，避免压住提示文字 */
+  .stk2{ bottom:1%; right:6%; }
 }
 
 /* ===================== 共通セクション ===================== */
@@ -556,7 +558,8 @@ body.playing .rain{
 }
 /* スマホ：常に写真が上、文字が下 */
 @media (max-width:640px){
-  .chapter, .chapter:nth-child(even){ flex-direction:column; }
+  .chapter, .chapter:nth-child(even){ flex-direction:column; align-items:stretch; }
+  .ch-img, .ch-body{ flex:1 1 auto; width:100%; }
 }
 
 /* ===================== CONTACT ===================== */

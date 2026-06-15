@@ -242,7 +242,7 @@ if ('IntersectionObserver' in window){
     entries.forEach(en => {
       if (en.isIntersecting){ en.target.classList.add('reveal-in'); io.unobserve(en.target); }
     });
-  }, { threshold:0.12 });
+  }, { threshold:0, rootMargin:'0px 0px -6% 0px' });
   revealEls.forEach(el => io.observe(el));
 } else {
   revealEls.forEach(el => el.classList.add('reveal-in'));
