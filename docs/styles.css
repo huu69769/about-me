@@ -198,6 +198,8 @@ html,body{
   position:relative;
   width:min(360px,72vw);
   aspect-ratio:1/1;
+  touch-action:none;     /* 触屏拨动黑胶时不滚动页面 */
+  user-select:none;
 }
 .vinyl{
   position:absolute;inset:0;
@@ -205,10 +207,9 @@ html,body{
   background:
     radial-gradient(circle at 50% 50%, #2a2a2a 0 28%, #111 28.5% 70%, #1a1a1a 70.5% 100%);
   box-shadow:0 18px 50px rgba(0,0,0,.7), inset 0 0 40px rgba(0,0,0,.8);
-  animation:spin 30s linear infinite;
-  animation-play-state:paused;
+  cursor:grab;
 }
-.vinyl.playing{ animation-play-state:running;}
+.vinyl.grabbing{ cursor:grabbing; }
 .vinyl-grooves{
   position:absolute;inset:6%;
   border-radius:50%;
@@ -575,3 +576,26 @@ body.playing .rain{
 @media (max-width:640px){
   .story-wrap, .story-wrap.reverse{ flex-direction:column; }
 }
+
+/* ===================== 交互：滚动渐入 ===================== */
+.js .section .sec-head,
+.js .about-wrap,
+.js .cat-timeline,
+.js .shelf-wrap,
+.js .shelf-note,
+.js .chapter,
+.js .saga-video,
+.js .contact-links{
+  opacity:0; transform:translateY(28px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.js .reveal-in{ opacity:1 !important; transform:none !important; }
+
+/* ===================== 交互：猫爪光标轨迹 ===================== */
+.paw{
+  position:fixed; z-index:70; pointer-events:none;
+  font-size:1.1rem; line-height:1;
+  transform:translate(-50%,-50%) rotate(var(--r,0deg));
+  animation:pawFade .8s ease forwards;
+}
+@keyframes pawFade{ 0%{opacity:.75;} 100%{opacity:0;} }

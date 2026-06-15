@@ -23,6 +23,9 @@ const playlist = [
 
 let current = 0;
 
+// 黑胶旋转状态
+let vinylRot = 0, spinning = false, dragging = false, vel = 0;
+
 const audio       = document.getElementById('audio');
 const vinyl       = document.getElementById('vinyl');
 const tonearm     = document.getElementById('tonearm');
@@ -54,10 +57,9 @@ function loadTrack(i, autoplay){
   trackArtist.textContent = t.artist;
   cover.src = t.cover;
   cover.style.display = '';
-  // 切り替え時：ジャケットの回転を 0 にリセット（まっすぐに戻す）
-  vinyl.style.animation = 'none';
-  void vinyl.offsetWidth;          // リフローで強制リセット
-  vinyl.style.animation = '';
+  // 切り替え時：ジャケットの回転を 0 に戻す
+  vinylRot = 0; vel = 0;
+  vinyl.style.transform = 'rotate(0deg)';
   progressFill.style.width = '0%';
   progressKnob.style.left = '0%';
   curTime.textContent = "00:00";
@@ -66,9 +68,9 @@ function loadTrack(i, autoplay){
 
 function setPlayingUI(){
   playBtn.textContent = "⏸";
-  vinyl.classList.add('playing');
+  spinning = true;                           // 开始转
   tonearm.classList.add('on');
-  document.body.classList.add('playing');   // 开始下雨
+  document.body.classList.add('playing');    // 开始下雨
 }
 
 function play(){
@@ -79,7 +81,7 @@ function play(){
 function pause(){
   audio.pause();
   playBtn.textContent = "▶";
-  vinyl.classList.remove('playing');
+  spinning = false;                          // 停止自转
   tonearm.classList.remove('on');
   document.body.classList.remove('playing'); // 停止下雨
 }
@@ -161,6 +163,89 @@ if (catLine){
   catLine.addEventListener('click', (e) => {
     if (moved > 6){ e.stopPropagation(); e.preventDefault(); }
   }, true);
+}
+
+// ===== 黑胶：自动旋转 + 手动拨动 =====
+const turntable = document.querySelector('.turntable');
+const DEG_PER_SEC = 12;            // 30秒一圈
+let lastFrame = null;
+function spinLoop(t){
+  if (lastFrame == null) lastFrame = t;
+  const dt = Math.min((t - lastFrame) / 1000, 0.05);
+  lastFrame = t;
+  if (!dragging){
+    if (spinning){
+      vinylRot += DEG_PER_SEC * dt;          // 播放中：稳定自转
+    } else if (Math.abs(vel) > 2){
+      vinylRot += vel * dt; vel *= 0.94;     // 暂停后：甩动惯性滑行
+    }
+    vinyl.style.transform = 'rotate(' + vinylRot + 'deg)';
+  }
+  requestAnimationFrame(spinLoop);
+}
+requestAnimationFrame(spinLoop);
+
+function pointerAngle(x, y){
+  const r = vinyl.getBoundingClientRect();
+  return Math.atan2(y - (r.top + r.height/2), x - (r.left + r.width/2)) * 180 / Math.PI;
+}
+if (turntable){
+  let prevAngle = 0, lastT = 0;
+  turntable.addEventListener('pointerdown', (e) => {
+    dragging = true; vel = 0;
+    prevAngle = pointerAngle(e.clientX, e.clientY);
+    lastT = performance.now();
+    vinyl.classList.add('grabbing');
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const a = pointerAngle(e.clientX, e.clientY);
+    let dA = a - prevAngle;
+    dA = ((dA + 180) % 360 + 360) % 360 - 180;     // 归一化到 [-180,180]
+    vinylRot += dA;
+    vinyl.style.transform = 'rotate(' + vinylRot + 'deg)';
+    const now = performance.now(), dT = (now - lastT) / 1000;
+    if (dT > 0) vel = Math.max(-720, Math.min(720, dA / dT));
+    prevAngle = a; lastT = now;
+  });
+  window.addEventListener('pointerup', () => {
+    if (!dragging) return;
+    dragging = false;
+    vinyl.classList.remove('grabbing');
+  });
+}
+
+// ===== 猫爪光标轨迹（仅鼠标设备）=====
+if (window.matchMedia && window.matchMedia('(pointer:fine)').matches){
+  let lastPaw = 0;
+  window.addEventListener('pointermove', (e) => {
+    const now = Date.now();
+    if (now - lastPaw < 70) return;
+    lastPaw = now;
+    const p = document.createElement('span');
+    p.className = 'paw';
+    p.textContent = '🐾';
+    p.style.left = e.clientX + 'px';
+    p.style.top  = e.clientY + 'px';
+    p.style.setProperty('--r', (Math.random() * 60 - 30) + 'deg');
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 800);
+  });
+}
+
+// ===== 滚动渐入 =====
+const revealEls = document.querySelectorAll(
+  '.section .sec-head, .about-wrap, .cat-timeline, .shelf-wrap, .shelf-note, .chapter, .saga-video, .contact-links'
+);
+if ('IntersectionObserver' in window){
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting){ en.target.classList.add('reveal-in'); io.unobserve(en.target); }
+    });
+  }, { threshold:0.12 });
+  revealEls.forEach(el => io.observe(el));
+} else {
+  revealEls.forEach(el => el.classList.add('reveal-in'));
 }
 
 // 初始化
