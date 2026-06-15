@@ -237,7 +237,7 @@ if (window.matchMedia && window.matchMedia('(pointer:fine)').matches){
 
 // ===== 滚动渐入 =====
 const revealEls = document.querySelectorAll(
-  '.section .sec-head, .about-wrap, .cat-timeline, .shelf-wrap, .shelf-note, .chapter, .saga-video, .contact-links'
+  '.section .sec-head, .about-wrap, .cat-timeline, .shelf-wrap, .shelf-note, .chapter, .contact-links'
 );
 if ('IntersectionObserver' in window){
   const io = new IntersectionObserver((entries) => {
