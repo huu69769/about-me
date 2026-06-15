@@ -127,10 +127,12 @@ if (rain){
   }
 }
 
-// 猫カード：タップで裏返す（スマホ用）
-document.querySelectorAll('.flip-card').forEach(card => {
-  card.addEventListener('click', () => card.classList.toggle('flipped'));
-});
+// 猫カード：タッチ端末はタップで裏返す／もう一度タップで戻す（PC はホバー）
+if (!(window.matchMedia && window.matchMedia('(hover:hover)').matches)){
+  document.querySelectorAll('.flip-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+  });
+}
 
 // 猫タイムライン：ドラッグ＆ホイールで横スクロール
 const catLine = document.querySelector('.cat-timeline');
