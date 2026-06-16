@@ -1,13 +1,13 @@
 // ===== Firebase 設定 =====
-// 「らくがきボード」を共有版にするには、ここにあなたの Firebase の設定を貼り付けてください。
-// （Firebase コンソール → プロジェクトの設定 → マイアプリ → SDK 設定と構成 → Config）
-// apiKey と databaseURL が空のままなら、自動的に「ローカル保存モード（自分の端末だけ）」で動きます。
+// 「らくがきボード」共有版の設定。
+// ※ この web 用設定は公開前提のものです（セキュリティはデータベースのルールで担保）。
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyBt41UxmfoI1U8eMS8P5HHgHKkxzYKtOpE",
+  authDomain: "about-me-board.firebaseapp.com",
+  databaseURL: "https://about-me-board-default-rtdb.firebaseio.com",
+  projectId: "about-me-board",
+  storageBucket: "about-me-board.firebasestorage.app",
+  messagingSenderId: "241175141485",
+  appId: "1:241175141485:web:855c0c413899cacc22f364",
+  measurementId: "G-BCTQ6N06JM"
 };
