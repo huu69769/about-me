@@ -354,7 +354,7 @@ body.playing .rain{
 .section.contact{
   background:
     linear-gradient(rgba(20,20,21,.70), rgba(20,20,21,.82)),
-    url('assets/img/wall.jpg') center center / cover no-repeat;
+    url('assets/img/wall.jpg') 65% center / cover no-repeat;
 }
 
 .sec-head{ margin-bottom:5vh; }
