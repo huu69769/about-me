@@ -2,21 +2,21 @@
 // 把你的 mp3 放到 assets/audio/，封面放到 assets/img/，改这里的路径即可
 const playlist = [
   {
-    title: "Purple Rain",
-    artist: "Prince and the Revolution",
-    src:   "assets/audio/song2.mp3",
-    cover: "assets/img/cover2.jpg"
-  },
-  {
     title: "November Rain",
     artist: "Guns N' Roses",
     src:   "assets/audio/song1.mp3",
     cover: "assets/img/cover1.jpg"
   },
   {
+    title: "Purple Rain",
+    artist: "Prince and the Revolution",
+    src:   "assets/audio/song2.mp3",
+    cover: "assets/img/cover2.jpg"
+  },
+  {
     title: "ENDLESS RAIN",
     artist: "X JAPAN",
-    src:   "assets/audio/song3.mp3",
+    src:   "",
     cover: "assets/img/cover3.jpg"
   }
 ];
@@ -52,7 +52,6 @@ function fmt(t){
 function loadTrack(i, autoplay){
   current = (i + playlist.length) % playlist.length;
   const t = playlist[current];
-  audio.src = t.src;
   trackTitle.textContent = t.title;
   trackArtist.textContent = t.artist;
   cover.src = t.cover;
@@ -63,6 +62,15 @@ function loadTrack(i, autoplay){
   progressFill.style.width = '0%';
   progressKnob.style.left = '0%';
   curTime.textContent = "00:00";
+  durTime.textContent = "00:00";
+  // 音源がない曲（例：3曲目）に切り替えたら、再生せずその場で止まる
+  if (!t.src){
+    audio.removeAttribute('src');
+    audio.load();
+    pause();
+    return;
+  }
+  audio.src = t.src;
   if (autoplay) play();
 }
 
