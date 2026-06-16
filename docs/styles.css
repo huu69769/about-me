@@ -575,6 +575,14 @@ body.playing .rain{
 }
 .c-link.alt{ background:#fff; color:#111; }
 .c-link:hover{ transform:translateY(-3px); }
+.c-mail{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  color:var(--ink);
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.2);
+  padding:.6em 1.4em; border-radius:6px;
+  user-select:all;
+}
 
 @media (max-width:640px){
   .story-wrap, .story-wrap.reverse{ flex-direction:column; }
