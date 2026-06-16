@@ -422,6 +422,9 @@ body.playing .rain{
 }
 .about-meta{ color:var(--red); font-family:'Caveat',cursive; font-size:1.3rem; margin:.5rem 0 1rem; }
 .about-text p{ font-size:clamp(1.05rem,1.6vw,1.3rem); line-height:1.6; }
+.about-text .bio + .bio{ margin-top:.85rem; }
+.bio-link{ color:var(--red); text-decoration:underline; text-underline-offset:3px; }
+.bio-link:hover{ opacity:.8; }
 
 /* ===================== 猫タイムライン ===================== */
 .cat-timeline{
