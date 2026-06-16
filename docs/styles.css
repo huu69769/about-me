@@ -24,22 +24,15 @@ html,body{
   overflow:hidden;
 }
 
-/* 背景にそっと残す思い出の壁（おじいちゃん） */
-.memory-bg{
-  position:fixed; inset:0; z-index:-1;
-  background:url('assets/img/wall.jpg') center center / cover no-repeat;
-  filter:grayscale(20%) brightness(.9);
-  pointer-events:none;
-}
 
 /* ===================== HERO ===================== */
 .hero{
   display:flex;
   align-items:stretch;
   background:
-    radial-gradient(900px 600px at 80% 30%, rgba(29,29,31,.85) 0%, transparent 60%),
-    radial-gradient(700px 500px at 10% 80%, rgba(24,24,25,.85) 0%, transparent 60%),
-    rgba(14,14,15,.78);
+    radial-gradient(900px 600px at 80% 30%, #1d1d1f 0%, transparent 60%),
+    radial-gradient(700px 500px at 10% 80%, #181819 0%, transparent 60%),
+    var(--bg);
 }
 
 .hero-left{
@@ -353,10 +346,16 @@ body.playing .rain{
   position:relative;
   padding:9vh 6vw;
   border-top:2px dashed rgba(255,255,255,.08);
-  background:rgba(14,14,15,.82);
+  background:var(--bg);
   overflow:hidden;
 }
-.section.cats, .section.contact{ background:rgba(22,22,23,.82); }
+.section.cats{ background:var(--bg2); }
+/* 結尾：おじいちゃんの壁をそっと背景に */
+.section.contact{
+  background:
+    linear-gradient(rgba(20,20,21,.70), rgba(20,20,21,.82)),
+    url('assets/img/wall.jpg') center center / cover no-repeat;
+}
 
 .sec-head{ margin-bottom:5vh; }
 .sec-label{
