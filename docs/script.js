@@ -258,62 +258,72 @@ if ('IntersectionObserver' in window){
   revealEls.forEach(el => el.classList.add('reveal-in'));
 }
 
-// ===== らくがきボード =====
+// ===== らくがきボード（線データ方式：共有/ローカル両対応）=====
 (function(){
   const canvas = document.getElementById('doodleCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  const noteEl = document.getElementById('dbNote');
   const PAPER = '#faf7f0';
-  const STORE_KEY = 'rakugaki-board';
-  let color = '#ff3b30', size = 4, erasing = false, drawing = false, lastX = 0, lastY = 0;
+  const LOCAL_KEY = 'rakugaki-strokes';
 
-  function cssH(){ return Math.round(canvas.clientWidth * 0.55); }
+  let color = '#ff3b30', size = 4, erasing = false;
+  let drawing = false, cur = null, lastPx = null;
+  let allStrokes = [];
 
-  function fitCanvas(keep){
-    const data = keep ? canvas.toDataURL() : null;
+  const cssW = () => canvas.clientWidth;
+  const cssH = () => Math.round(canvas.clientWidth * 0.55);
+
+  function setupCanvas(){
     const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth, h = cssH();
-    canvas.style.height = h + 'px';
-    canvas.width  = w * dpr;
-    canvas.height = h * dpr;
+    canvas.style.height = cssH() + 'px';
+    canvas.width  = cssW() * dpr;
+    canvas.height = cssH() * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, w, h);
-    if (data){ const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = data; }
   }
-
-  function pos(e){ const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
-  function start(e){ drawing = true; [lastX, lastY] = pos(e); stroke(e); }
-  function stroke(e){
-    if (!drawing) return;
-    const [x, y] = pos(e);
-    ctx.strokeStyle = erasing ? PAPER : color;
-    ctx.lineWidth   = erasing ? size * 2.4 : size;
+  function clearPaper(){ ctx.fillStyle = PAPER; ctx.fillRect(0, 0, cssW(), cssH()); }
+  function seg(x1,y1,x2,y2,c,w,e){
+    ctx.strokeStyle = e ? PAPER : c;
+    ctx.lineWidth   = e ? w * 2.4 : w;
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-    lastX = x; lastY = y;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
   }
-  function end(){ if (drawing){ drawing = false; saveBoard(); } }
-
-  canvas.addEventListener('pointerdown', start);
-  canvas.addEventListener('pointermove', stroke);
-  window.addEventListener('pointerup', end);
-
-  /* =====================================================================
-     保存／読み込み（★バックエンド差し替えポイント★）
-     いまは localStorage に保存＝その人の端末だけに残る（共有されない）。
-     共有ボードにするときは、この2関数を Firebase / Supabase 用に置き換え、
-     さらにリアルタイム購読を1つ足すだけで「みんなで描ける壁」になる。
-     ===================================================================== */
-  function saveBoard(){ try { localStorage.setItem(STORE_KEY, canvas.toDataURL('image/png')); } catch(e){} }
-  function loadBoard(){
-    const data = localStorage.getItem(STORE_KEY);
-    if (!data) return;
-    const img = new Image();
-    img.onload = () => ctx.drawImage(img, 0, 0, canvas.clientWidth, cssH());
-    img.src = data;
+  function drawStroke(s){
+    const w = cssW(), h = cssH(), p = s.p;
+    if (!p || !p.length) return;
+    if (p.length === 1){ seg(p[0][0]*w, p[0][1]*h, p[0][0]*w, p[0][1]*h, s.c, s.w, s.e); return; }
+    for (let i = 1; i < p.length; i++) seg(p[i-1][0]*w, p[i-1][1]*h, p[i][0]*w, p[i][1]*h, s.c, s.w, s.e);
   }
+  function redrawAll(){ setupCanvas(); clearPaper(); allStrokes.forEach(drawStroke); }
 
-  // 色
+  const pos  = (e) => { const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const norm = (x,y) => [ +(x / cssW()).toFixed(4), +(y / cssH()).toFixed(4) ];
+
+  function startDraw(e){
+    drawing = true;
+    const [x,y] = pos(e);
+    cur = { c: color, w: size, e: erasing, p: [ norm(x,y) ] };
+    lastPx = [x,y];
+    seg(x,y,x,y,cur.c,cur.w,cur.e);
+  }
+  function moveDraw(e){
+    if (!drawing) return;
+    const [x,y] = pos(e);
+    seg(lastPx[0], lastPx[1], x, y, cur.c, cur.w, cur.e);
+    lastPx = [x,y];
+    cur.p.push(norm(x,y));
+  }
+  function endDraw(){
+    if (!drawing) return;
+    drawing = false;
+    if (cur && cur.p.length) commitStroke(cur);
+    cur = null;
+  }
+  canvas.addEventListener('pointerdown', startDraw);
+  canvas.addEventListener('pointermove', moveDraw);
+  window.addEventListener('pointerup', endDraw);
+
+  // 道具
   document.querySelectorAll('.db-color').forEach(b => {
     b.addEventListener('click', () => {
       color = b.dataset.color; erasing = false;
@@ -322,7 +332,6 @@ if ('IntersectionObserver' in window){
       document.getElementById('dbEraser').classList.remove('active');
     });
   });
-  // 太さ
   document.querySelectorAll('.db-size').forEach(b => {
     b.addEventListener('click', () => {
       size = parseInt(b.dataset.size, 10);
@@ -330,14 +339,8 @@ if ('IntersectionObserver' in window){
       b.classList.add('active');
     });
   });
-  // けしゴム
   const eraserBtn = document.getElementById('dbEraser');
   eraserBtn.addEventListener('click', () => { erasing = !erasing; eraserBtn.classList.toggle('active', erasing); });
-  // ぜんぶ消す
-  document.getElementById('dbClear').addEventListener('click', () => {
-    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, canvas.clientWidth, cssH()); saveBoard();
-  });
-  // 画像で保存
   document.getElementById('dbSave').addEventListener('click', () => {
     const link = document.createElement('a');
     link.download = 'rakugaki.png';
@@ -345,9 +348,47 @@ if ('IntersectionObserver' in window){
     link.click();
   });
 
-  fitCanvas(false);
-  loadBoard();
-  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => fitCanvas(true), 200); });
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(redrawAll, 200); });
+
+  /* =====================================================================
+     共有 or ローカル（firebase-config.js に設定があれば自動で共有版）
+     ・共有：1ストローク＝1レコードを Firebase に push、child_added で全員に同期
+     ・全消しボタンは公開しない（方案A）。オーナーは Firebase コンソールから
+       board/strokes を削除すれば全消しできる。
+     ===================================================================== */
+  const cfg = window.FIREBASE_CONFIG || {};
+  const useFB = !!(cfg.apiKey && cfg.databaseURL && window.firebase);
+  let fbRef = null;
+
+  function commitStroke(s){
+    if (fbRef) { fbRef.push(s); }            // child_added で描画＆配列に追加
+    else { allStrokes.push(s); saveLocal(); }
+  }
+  function saveLocal(){ try { localStorage.setItem(LOCAL_KEY, JSON.stringify(allStrokes)); } catch(e){} }
+
+  setupCanvas(); clearPaper();
+
+  if (useFB){
+    try {
+      firebase.initializeApp(cfg);
+      fbRef = firebase.database().ref('board/strokes');
+      fbRef.on('child_added', (snap) => {
+        const s = snap.val();
+        if (s && s.p){ allStrokes.push(s); drawStroke(s); }
+      });
+      if (noteEl) noteEl.textContent = '※ みんなのらくがき。リアルタイムで共有されます。';
+    } catch(err){
+      console.warn('Firebase init failed → ローカルモード', err);
+      fbRef = null; startLocal();
+    }
+  } else {
+    startLocal();
+  }
+
+  function startLocal(){
+    try { const d = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); if (Array.isArray(d)) allStrokes = d; } catch(e){}
+    redrawAll();
+  }
 })();
 
 // 初始化

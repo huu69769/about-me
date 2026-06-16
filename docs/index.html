@@ -405,11 +405,10 @@
         <button class="db-size" data-size="20"><span class="dot" style="width:18px;height:18px"></span></button>
       </div>
       <button class="db-btn" id="dbEraser">けしゴム</button>
-      <button class="db-btn" id="dbClear">ぜんぶ消す</button>
       <button class="db-btn db-save" id="dbSave">画像で保存</button>
     </div>
     <canvas id="doodleCanvas" class="doodle-canvas"></canvas>
-    <p class="doodle-note">※ いまは自分の端末にだけ残ります。</p>
+    <p class="doodle-note" id="dbNote">※ いまは自分の端末にだけ残ります。</p>
   </div>
 </section>
 
@@ -426,6 +425,10 @@
   </div>
 </section>
 
+<!-- Firebase（共有らくがきボード用）。未設定なら自動でローカル動作のまま -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
