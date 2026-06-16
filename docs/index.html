@@ -381,36 +381,19 @@
 </section>
 
 <!-- ===================== らくがきボード / DOODLE ===================== -->
-<section class="section doodle-sec" id="doodle">
+<section class="section board-sec" id="board">
   <div class="sec-head">
     <span class="sec-label" style="--rot:2deg">PLAY</span>
     <h2 class="sec-title">らくがきボード</h2>
-    <p class="sec-sub">クレヨンで自由にどうぞ。あなたの落書きを残してね。</p>
+    <p class="sec-sub">ひとことどうぞ。メモがボードに貼られます。</p>
   </div>
 
-  <div class="doodle-wrap">
-    <div class="doodle-tools">
-      <div class="tool-group" id="dbColors">
-        <button class="db-color active" data-color="#ff3b30" style="background:#ff3b30" aria-label="赤"></button>
-        <button class="db-color" data-color="#ff9f1c" style="background:#ff9f1c" aria-label="橙"></button>
-        <button class="db-color" data-color="#ffd23b" style="background:#ffd23b" aria-label="黄"></button>
-        <button class="db-color" data-color="#3ddb84" style="background:#3ddb84" aria-label="緑"></button>
-        <button class="db-color" data-color="#2d9cdb" style="background:#2d9cdb" aria-label="青"></button>
-        <button class="db-color" data-color="#a86bff" style="background:#a86bff" aria-label="紫"></button>
-        <button class="db-color" data-color="#1a1a1a" style="background:#1a1a1a" aria-label="黒"></button>
-      </div>
-      <div class="tool-group" id="dbSizes">
-        <button class="db-size active" data-size="4"><span class="dot" style="width:6px;height:6px"></span></button>
-        <button class="db-size" data-size="10"><span class="dot" style="width:11px;height:11px"></span></button>
-        <button class="db-size" data-size="20"><span class="dot" style="width:18px;height:18px"></span></button>
-      </div>
-      <button class="db-btn" id="dbEraser">けしゴム</button>
-      <button class="db-btn" id="dbClear">ぜんぶ消す</button>
-      <button class="db-btn db-save" id="dbSave">画像で保存</button>
-    </div>
-    <canvas id="doodleCanvas" class="doodle-canvas"></canvas>
-    <p class="doodle-note">※ いまは自分の端末にだけ残ります。</p>
+  <div class="board-input">
+    <input id="noteText" type="text" maxlength="80" placeholder="ここに書いてね…（最大80文字）" />
+    <button id="noteSend" class="db-btn db-save">貼る</button>
   </div>
+  <div class="board" id="noteBoard"></div>
+  <p class="doodle-note">※ いまは自分の端末にだけ残ります。</p>
 </section>
 
 <!-- ===================== CONTACT ===================== -->

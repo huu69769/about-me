@@ -250,96 +250,66 @@ if ('IntersectionObserver' in window){
   revealEls.forEach(el => el.classList.add('reveal-in'));
 }
 
-// ===== らくがきボード =====
+// ===== らくがきボード（拼贴留言板）=====
 (function(){
-  const canvas = document.getElementById('doodleCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const PAPER = '#faf7f0';
-  const STORE_KEY = 'rakugaki-board';
-  let color = '#ff3b30', size = 4, erasing = false, drawing = false, lastX = 0, lastY = 0;
+  const board = document.getElementById('noteBoard');
+  const input = document.getElementById('noteText');
+  const sendBtn = document.getElementById('noteSend');
+  if (!board || !input || !sendBtn) return;
 
-  function cssH(){ return Math.round(canvas.clientWidth * 0.55); }
+  const STORE_KEY = 'rakugaki-notes';
+  // 手書き感のフォント＆付箋の色（ランダムで割り当て）
+  const FONTS = ["'Caveat', cursive", "'Yomogi', cursive", "'Gochi Hand', cursive", "'Permanent Marker', cursive"];
+  const COLORS = ['#fff7a8', '#ffd1dc', '#bfe7ff', '#c8f7c5', '#ffd8a8', '#e6d6ff', '#fdfdfd'];
+  const rand = (a) => a[Math.floor(Math.random() * a.length)];
 
-  function fitCanvas(keep){
-    const data = keep ? canvas.toDataURL() : null;
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth, h = cssH();
-    canvas.style.height = h + 'px';
-    canvas.width  = w * dpr;
-    canvas.height = h * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, w, h);
-    if (data){ const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = data; }
+  let notes = [];
+
+  function renderNote(n){
+    const el = document.createElement('div');
+    el.className = 'note';
+    el.textContent = n.text;                 // textContent＝HTML注入を防ぐ
+    el.style.setProperty('--rot', n.rot + 'deg');
+    el.style.background = n.color;
+    el.style.fontFamily = n.font;
+    board.appendChild(el);
   }
 
-  function pos(e){ const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
-  function start(e){ drawing = true; [lastX, lastY] = pos(e); stroke(e); }
-  function stroke(e){
-    if (!drawing) return;
-    const [x, y] = pos(e);
-    ctx.strokeStyle = erasing ? PAPER : color;
-    ctx.lineWidth   = erasing ? size * 2.4 : size;
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-    lastX = x; lastY = y;
+  function addNote(text){
+    const t = text.trim();
+    if (!t) return;
+    const n = {
+      text: t.slice(0, 80),
+      font: rand(FONTS),
+      color: rand(COLORS),
+      rot: (Math.random() * 12 - 6).toFixed(1)
+    };
+    notes.push(n);
+    renderNote(n);
+    saveNotes();
   }
-  function end(){ if (drawing){ drawing = false; saveBoard(); } }
-
-  canvas.addEventListener('pointerdown', start);
-  canvas.addEventListener('pointermove', stroke);
-  window.addEventListener('pointerup', end);
 
   /* =====================================================================
      保存／読み込み（★バックエンド差し替えポイント★）
-     いまは localStorage に保存＝その人の端末だけに残る（共有されない）。
+     いまは localStorage ＝その人の端末だけに残る（共有されない）。
      共有ボードにするときは、この2関数を Firebase / Supabase 用に置き換え、
-     さらにリアルタイム購読を1つ足すだけで「みんなで描ける壁」になる。
+     addNote 内で1件 push ＋ 新着をリアルタイム購読して renderNote するだけで、
+     「みんなで貼れる伝言板」になる。
      ===================================================================== */
-  function saveBoard(){ try { localStorage.setItem(STORE_KEY, canvas.toDataURL('image/png')); } catch(e){} }
-  function loadBoard(){
-    const data = localStorage.getItem(STORE_KEY);
-    if (!data) return;
-    const img = new Image();
-    img.onload = () => ctx.drawImage(img, 0, 0, canvas.clientWidth, cssH());
-    img.src = data;
+  function saveNotes(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(notes)); } catch(e){} }
+  function loadNotes(){
+    try {
+      const data = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+      if (Array.isArray(data)){ notes = data; notes.forEach(renderNote); }
+    } catch(e){}
   }
 
-  // 色
-  document.querySelectorAll('.db-color').forEach(b => {
-    b.addEventListener('click', () => {
-      color = b.dataset.color; erasing = false;
-      document.querySelectorAll('.db-color').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      document.getElementById('dbEraser').classList.remove('active');
-    });
-  });
-  // 太さ
-  document.querySelectorAll('.db-size').forEach(b => {
-    b.addEventListener('click', () => {
-      size = parseInt(b.dataset.size, 10);
-      document.querySelectorAll('.db-size').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-    });
-  });
-  // けしゴム
-  const eraserBtn = document.getElementById('dbEraser');
-  eraserBtn.addEventListener('click', () => { erasing = !erasing; eraserBtn.classList.toggle('active', erasing); });
-  // ぜんぶ消す
-  document.getElementById('dbClear').addEventListener('click', () => {
-    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, canvas.clientWidth, cssH()); saveBoard();
-  });
-  // 画像で保存
-  document.getElementById('dbSave').addEventListener('click', () => {
-    const link = document.createElement('a');
-    link.download = 'rakugaki.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+  sendBtn.addEventListener('click', () => { addNote(input.value); input.value = ''; input.focus(); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ e.preventDefault(); addNote(input.value); input.value = ''; }
   });
 
-  fitCanvas(false);
-  loadBoard();
-  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => fitCanvas(true), 200); });
+  loadNotes();
 })();
 
 // 初始化
