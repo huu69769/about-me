@@ -2,16 +2,16 @@
 // 把你的 mp3 放到 assets/audio/，封面放到 assets/img/，改这里的路径即可
 const playlist = [
   {
-    title: "November Rain",
-    artist: "Guns N' Roses",
-    src:   "assets/audio/song1.mp3",
-    cover: "assets/img/cover1.jpg"
-  },
-  {
     title: "Purple Rain",
     artist: "Prince and the Revolution",
     src:   "assets/audio/song2.mp3",
     cover: "assets/img/cover2.jpg"
+  },
+  {
+    title: "November Rain",
+    artist: "Guns N' Roses",
+    src:   "assets/audio/song1.mp3",
+    cover: "assets/img/cover1.jpg"
   },
   {
     title: "ENDLESS RAIN",
