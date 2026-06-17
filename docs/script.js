@@ -4,7 +4,7 @@ const playlist = [
   {
     title: "Purple Rain",
     artist: "Prince and the Revolution",
-    src:   "assets/audio/song2.mp3",
+    src:   "assets/audio/song2.mp3?v=2",
     cover: "assets/img/cover2.jpg"
   },
   {
